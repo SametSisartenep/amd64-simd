@@ -37,20 +37,20 @@ TEXT Pt2b(SB), 1, $0
 
 TEXT hsubpd(SB), 1, $0
 	MOVQ SP, AX
-	MOVLPD(8, rAX, rX0)
-	MOVHPD(16, rAX, rX0)
-	HSUBPD(rX0, rX0)
+	MOVLPD(8, rAX, rX0)	/* MOVLPD a+0(FP), X0 */
+	MOVHPD(16, rAX, rX0)	/* MOVHPD b+0(FP), X0 */
+	HSUBPD(rX0, rX0)	/* HSUBPD X0, X0 */
 	RET
 
 TEXT xvec3(SB), 1, $0
 	MOVQ SP, AX
 	ADDQ $8, AX
-	MOVLPD(40, rAX, rX0)
-	MOVHPD(8, rAX, rX0)
-	MOVLPD(16, rAX, rX1)
-	MOVHPD(48, rAX, rX1)
-	MOVLPD(56, rAX, rX2)
-	MOVHPD(24, rAX, rX2)
+	MOVLPD(40, rAX, rX0)	/* MOVLPD b+0(FP), X0 */
+	MOVHPD(8, rAX, rX0)	/* MOVHPD a+0(FP), X0 */
+	MOVLPD(16, rAX, rX1)	/* MOVLPD a+8(FP), X1 */
+	MOVHPD(48, rAX, rX1)	/* MOVHPD b+8(FP), X1 */
+	MOVLPD(56, rAX, rX2)	/* MOVLPD b+16(FP), X2 */
+	MOVHPD(24, rAX, rX2)	/* MOVHPD a+16(FP), X2 */
 	MOVAPD X1, X3
 	MULPD X2, X3
 	HSUBPD(rX3, rX3)	/* x */
