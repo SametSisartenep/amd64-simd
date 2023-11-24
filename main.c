@@ -9,6 +9,7 @@ double dppd3(Point3, Point3);
 Point2 Pt2b(double, double, double);
 Point3 xvec3(Point3, Point3);
 double hsubpd(double, double);
+double fma(double, double, double);
 
 double
 fmin(double a, double b)
@@ -77,6 +78,11 @@ main(int argc, char *argv[])
 	pr = crossvec3(p0t, p1t);
 	t1 = nanosec();
 	print("crossvec3(%V, %V) = %V\ttook %lludns\n", p0t, p1t, pr, t1-t0);
+
+	t0 = nanosec();
+	r = fma(a, b, 21);
+	t1 = nanosec();
+	print("fma(%g, %g, 21) = %g\ttook %lludns\n", a, b, r, t1-t0);
 
 	exits(nil);
 }
