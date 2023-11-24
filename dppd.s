@@ -19,6 +19,7 @@ TEXT dppda(SB), 1, $0
 	VMOVUPD_128mr(8, rAX, rX0)	/* VMOVUPD a+0(FP), X0 */
 	VMOVUPD_128mr(32, rAX, rX1)	/* VMOVUPD b+24(FP), X1 */
 	VDPPD(rX1, rX0, rX0)		/* VDPPD $0x31, X1, X0, X0 */
+	VZEROUPPER
 	RET
 
 TEXT dppd3(SB), 1, $0
@@ -42,6 +43,7 @@ TEXT dppd3a(SB), 1, $0
 	MOVSD a+16(FP), X1
 	MOVSD b+48(FP), X2
 	VFMADD231SD(rX1, rX2, rX0)
+	VZEROUPPER
 	RET
 
 TEXT Pt2b(SB), 1, $0
@@ -89,9 +91,15 @@ TEXT xvec3(SB), 1, $0
 	MOVSD X0, 24(DI)
 	RET
 
+TEXT xvec3a(SB), 1, $0
+	MOVQ SP, AX
+	ADDQ $8, AX
+	
+
 TEXT fma(SB), 1, $0
 	MOVSD a+0(FP), X0
 	MOVSD b+8(FP), X1
 	MOVSD c+16(FP), X2
 	VFMADD231SD(rX1, rX2, rX0)
+	VZEROUPPER
 	RET

@@ -22,19 +22,83 @@
 /* VZEROUPPER */
 #define VZEROUPPER	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_NO); BYTE $0x77
 
-/* VMOVAPD */
+/* VZEROALL */
+#define VZEROALL	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_NO); BYTE $0x77
+
+/* VMOVUPD */
 #define VMOVUPD_128mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);	\
 				VOPi(0x10, 0x1, (d), (s), (off))
+#define VMOVUPD_128rr(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);		\
+			VOP(0x10, 0x3, (d), (s))
+#define VMOVUPD_256mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);	\
+				VOPi(0x10, 0x1, (d), (s), (off))
+#define VMOVUPD_256rr(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);		\
+			VOP(0x10, 0x3, (d), (s))
+
+/* VMOVAPD */
+#define VMOVAPD_128mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);	\
+				VOPi(0x28, 0x1, (d), (s), (off))
 #define VMOVAPD_128rr(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);		\
 			VOP(0x28, 0x3, (d), (s))
+#define VMOVAPD_256mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);	\
+				VOPi(0x28, 0x1, (d), (s), (off))
+#define VMOVAPD_256rr(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);		\
+			VOP(0x28, 0x3, (d), (s))
+
+/* VADDPD */
+#define VADDPD_128mr(off, s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_128,VEX_p_66);	\
+				VOPi(0x58, 0x1, (d), (s1), (off))
+#define VADDPD_128rr(s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_128,VEX_p_66);		\
+				VOP(0x58, 0x3, (d), (s1))
+#define VADDPD_256mr(off, s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_256,VEX_p_66);	\
+				VOPi(0x58, 0x1, (d), (s1), (off))
+#define VADDPD_256rr(s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_256,VEX_p_66);		\
+				VOP(0x58, 0x3, (d), (s1))
+
+/* VSUBPD */
+#define VSUBPD_128mr(off, s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_128,VEX_p_66);	\
+				VOPi(0x5C, 0x1, (d), (s1), (off))
+#define VSUBPD_128rr(s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_128,VEX_p_66);		\
+				VOP(0x5C, 0x3, (d), (s1))
+#define VSUBPD_256mr(off, s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_256,VEX_p_66);	\
+				VOPi(0x5C, 0x1, (d), (s1), (off))
+#define VSUBPD_256rr(s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_256,VEX_p_66);		\
+				VOP(0x5C, 0x3, (d), (s1))
+
+/* VHADDPD */
+#define VHADDPD_128mr(off, s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_128,VEX_p_66);	\
+				VOPi(0x7C, 0x1, (d), (s1), (off))
+#define VHADDPD_128rr(s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_128,VEX_p_66);	\
+				VOP(0x7C, 0x3, (d), (s1))
+#define VHADDPD_256mr(off, s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_256,VEX_p_66);	\
+				VOPi(0x7C, 0x1, (d), (s1), (off))
+#define VHADDPD_256rr(s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_256,VEX_p_66);	\
+				VOP(0x7C, 0x3, (d), (s1))
+
+/* VHSUBPD */
+#define VHSUBPD_128mr(off, s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_128,VEX_p_66);	\
+				VOPi(0x7D, 0x1, (d), (s1), (off))
+#define VHSUBPD_128rr(s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_128,VEX_p_66);	\
+				VOP(0x7D, 0x3, (d), (s1))
+#define VHSUBPD_256mr(off, s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_256,VEX_p_66);	\
+				VOPi(0x7D, 0x1, (d), (s1), (off))
+#define VHSUBPD_256rr(s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_256,VEX_p_66);	\
+				VOP(0x7D, 0x3, (d), (s1))
+
 /* VDPPD */
 #define VDPPD(s0, s1, d)	VEX3(0,0,0,VEX_m_0F3A,0,(s0),VEX_L_128,VEX_p_66);	\
 			VOPi(0x41, 0x3, (d), (s1), 0x31)
 
 /* VFMADD231SD (128 bit) */
-#define VFMADD231SD(s0, s1, d)	VEX3(0,0,0,VEX_m_0F38,1,(s0),VEX_L_128,VEX_p_66);	\
+#define VFMADD231SD(s0, s1, d)	VEX3(0,0,0,VEX_m_0F38,1,(s0),VEX_L_128,VEX_p_66);		\
+			VOP(0xB9, 0x3, (d), (s1))
+/* VFMADD231SD (256 bit) */
+#define VFMADD231SD_256(s0, s1, d)	VEX3(0,0,0,VEX_m_0F38,1,(s0),VEX_L_256,VEX_p_66);	\
 			VOP(0xB9, 0x3, (d), (s1))
 
 /* VFMADD231PD (128 bit) */
-#define VFMADD231PD(s0, s1, d)	VEX3(0,0,0,VEX_m_0F38,1,(s0),VEX_L_128,VEX_p_66);	\
+#define VFMADD231PD(s0, s1, d)	VEX3(0,0,0,VEX_m_0F38,1,(s0),VEX_L_128,VEX_p_66);		\
+			VOP(0xB8, 0x3, (d), (s1))
+/* VFMADD231PD (256 bit) */
+#define VFMADD231PD_256(s0, s1, d)	VEX3(0,0,0,VEX_m_0F38,1,(s0),VEX_L_256,VEX_p_66);	\
 			VOP(0xB8, 0x3, (d), (s1))
