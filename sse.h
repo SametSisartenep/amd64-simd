@@ -41,6 +41,8 @@
 			BYTE $(((~r)<<7)|((~v)<<3)|((l)<<2)|(p))
 #define VOP(o, m, ro, rm)	BYTE $(o);	\
 			BYTE $(((m)<<6)|((ro)<<3)|(rm))
+#define VOPi(o, m, ro, rm, i)	VOP((o), (m), (ro), (rm));	\
+			BYTE $(i)
 
 /* MOVLPD */
 //opcode = 660F12
@@ -64,6 +66,15 @@
 //modrm  = 11 000 001 [X1 → X0]
 //imm8   = 0011 0001
 #define DPPD(s, d) OP4i(0x413A, 0x3, (d), (s), 0x31)
+
+/* VMOVAPD */
+#define VMOVUPD_128mr(off, s, d) VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);			\
+			VOPi(0x10, 0x1, (d), (s), (off))
+#define VMOVAPD_128rr(s, d) VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);			\
+			VOP(0x28, 0x3, (d), (s))
+/* VDPPD */
+#define VDPPD(s0, s1, d) VEX3(0,0,0,VEX_m_0F3A,0,(s0),VEX_L_128,VEX_p_66);		\
+			VOPi(0x41, 0x3, (d), (s1), 0x31)
 
 /* VFMADD231SD (128 bit) */
 #define VFMADD231SD(s0, s1, d) VEX3(0,0,0,VEX_m_0F38,1,(s0),VEX_L_128,VEX_p_66);	\

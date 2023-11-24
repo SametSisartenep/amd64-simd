@@ -5,7 +5,9 @@
 uvlong nanosec(void);
 double min(double, double);
 double dppd(Point2, Point2);
+double dppda(Point2, Point2);
 double dppd3(Point3, Point3);
+double dppd3a(Point3, Point3);
 Point2 Pt2b(double, double, double);
 Point3 xvec3(Point3, Point3);
 double hsubpd(double, double);
@@ -41,6 +43,8 @@ main(int argc, char *argv[])
 	t1 = nanosec();
 	print("min(%g, %g) = %g\ttook %lludns\n", a, b, r, t1-t0);
 
+	print("\n");
+
 	p0 = Pt2b(a, 1, 1);
 	p1 = Pt2b(b, 3, 1);
 	t0 = nanosec();
@@ -51,6 +55,12 @@ main(int argc, char *argv[])
 	r = dotvec2(p0, p1);
 	t1 = nanosec();
 	print("dotvec2(%v, %v) = %g\ttook %lludns\n", p0, p1, r, t1-t0);
+	t0 = nanosec();
+	r = dppda(p0, p1);
+	t1 = nanosec();
+	print("dppda(%v, %v) = %g\ttook %lludns\n", p0, p1, r, t1-t0);
+
+	print("\n");
 
 	p0t = Pt3(a, 1, 9, 1);
 	p1t = Pt3(b, 3, 4, 1);
@@ -62,11 +72,19 @@ main(int argc, char *argv[])
 	r = dotvec3(p0t, p1t);
 	t1 = nanosec();
 	print("dotvec3(%V, %V) = %g\ttook %lludns\n", p0t, p1t, r, t1-t0);
+	t0 = nanosec();
+	r = dppd3a(p0t, p1t);
+	t1 = nanosec();
+	print("dppd3a(%V, %V) = %g\ttook %lludns\n", p0t, p1t, r, t1-t0);
+
+	print("\n");
 
 	t0 = nanosec();
 	r = hsubpd(a, b);
 	t1 = nanosec();
 	print("hsubpd(%g, %g) = %g\ttook %lludns\n", a, b, r, t1-t0);
+
+	print("\n");
 
 	p0t = Pt3(a, 1, 9, 1);
 	p1t = Pt3(b, 3, 4, 1);
@@ -78,6 +96,8 @@ main(int argc, char *argv[])
 	pr = crossvec3(p0t, p1t);
 	t1 = nanosec();
 	print("crossvec3(%V, %V) = %V\ttook %lludns\n", p0t, p1t, pr, t1-t0);
+
+	print("\n");
 
 	t0 = nanosec();
 	r = fma(a, b, 21);

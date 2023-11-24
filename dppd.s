@@ -12,6 +12,13 @@ TEXT dppd(SB), 1, $0
 	DPPD(rX1, rX0)		/* DPPD $0x31, X1, X0 */
 	RET
 
+TEXT dppda(SB), 1, $0
+	MOVQ SP, AX
+	VMOVUPD_128mr(8, rAX, rX0)	/* VMOVUPD a+0(FP), X0 */
+	VMOVUPD_128mr(32, rAX, rX1)	/* VMOVUPD b+24(FP), X1 */
+	VDPPD(rX1, rX0, rX0)		/* VDPPD $0x31, X1, X0, X0 */
+	RET
+
 TEXT dppd3(SB), 1, $0
 	MOVQ SP, AX
 	MOVLPD(8, rAX, rX0)	/* MOVLPD a+0(FP), X0 */
@@ -23,6 +30,16 @@ TEXT dppd3(SB), 1, $0
 	MOVHPD(24, rAX, rX0)	/* MOVHPD a+16(FP), X0 */
 	MOVHPD(56, rAX, rX1)	/* MOVHPD b+48(FP), X1 */
 	DPPD(rX1, rX0)		/* DPPD $0x31, X1, X0 */
+	RET
+
+TEXT dppd3a(SB), 1, $0
+	MOVQ SP, AX
+	VMOVUPD_128mr(8, rAX, rX0)	/* VMOVUPD a+0(FP), X0 */
+	VMOVUPD_128mr(40, rAX, rX1)	/* VMOVUPD b+32(FP), X1 */
+	VDPPD(rX1, rX0, rX0)		/* VDPPD $0x31, X1, X0, X0 */
+	MOVSD a+16(FP), X1
+	MOVSD b+48(FP), X2
+	VFMADD231SD(rX1, rX2, rX0)
 	RET
 
 TEXT Pt2b(SB), 1, $0
