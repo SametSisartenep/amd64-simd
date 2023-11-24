@@ -1,4 +1,6 @@
+#include "regs.h"
 #include "sse.h"
+#include "avx.h"
 
 DATA one(SB)/8,$1.0
 GLOBL one(SB), $8

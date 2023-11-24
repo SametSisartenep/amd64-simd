@@ -9,6 +9,8 @@ OFILES=\
 	nanosec.$O\
 
 HFILES=\
+	regs.h\
 	sse.h\
+	avx.h\
 
 </sys/src/cmd/mkone
