@@ -122,3 +122,7 @@
 /* VFMADD231PD (256 bit) */
 #define VFMADD231PD_256(s0, s1, d)	VEX3(0,0,0,VEX_m_0F38,1,(s0),VEX_L_256,VEX_p_66);	\
 			VOP(0xB8, 0x3, (d), (s1))
+
+/* VINSERTF128 */
+#define VINSERTF128(i, s0, s1, d)	VEX3(0,0,0,VEX_m_0F3A,0,(s0),VEX_L_256,VEX_p_66);	\
+			VOPi(0x18, 0x3, (d), (s1), (i))

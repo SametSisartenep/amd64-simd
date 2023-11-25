@@ -14,6 +14,7 @@ Point3 crossvec3_sse(Point3, Point3);
 double hsubpd(double, double);
 double fma(double, double, double);
 Point2 addpt2_avx(Point2, Point2);
+Point3 addpt3_avx(Point3, Point3);
 
 double
 fmin(double a, double b)
@@ -258,6 +259,37 @@ baddpt2(int fd)
 	benchfreegr(&g);
 }
 
+static void
+baddpt3(int fd)
+{
+	Bgr g;
+	B *b0, *b1;
+	Point3 a, b;
+	int i;
+
+	benchinitgr(&g, "3d point sum");
+	b0 = benchadd(&g, "addpt3");
+	b1 = benchadd(&g, "addpt3_avx");
+
+	while(b0->n > 0 || b1->n > 0){
+		a = Pt3(truerand()*frand(), truerand()*frand(), truerand()*frand(), truerand()*frand());
+		b = Pt3(truerand()*frand(), truerand()*frand(), truerand()*frand(), truerand()*frand());
+
+		benchin(b0);
+		for(i = 0; i < 1e6; i++)
+			addpt3(a, b);
+		benchout(b0);
+
+		benchin(b1);
+		for(i = 0; i < 1e6; i++)
+			addpt3_avx(a, b);
+		benchout(b1);
+	}
+
+	benchprintgr(&g, fd);
+	benchfreegr(&g);
+}
+
 void
 threadmain(int argc, char **argv)
 {
@@ -280,6 +312,8 @@ threadmain(int argc, char **argv)
 	bfma(1);
 	bseparator(1);
 	baddpt2(1);
+	bseparator(1);
+	baddpt3(1);
 
 	threadexitsall(nil);
 }

@@ -99,11 +99,21 @@ TEXT fma(SB), 1, $0
 	VFMADD231SD(rX1, rX2, rX0)
 	RET
 
+/* TODO: write only 24 bytes */
 TEXT addpt2_avx(SB), 1, $0
 	MOVQ SP, AX
 	ADDQ $8, AX
 	VMOVDQU_256mr(8, rAX, rX0)
 	VMOVDQU_256mr(32, rAX, rX1)
+	VADDPD_256rr(rX1, rX0, rX0)
+	VMOVDQU_256rm(rX0, rAX)
+	RET
+
+TEXT addpt3_avx(SB), 1, $0
+	MOVQ SP, AX
+	ADDQ $8, AX
+	VMOVDQU_256mr(8, rAX, rX0)
+	VMOVDQU_256mr(40, rAX, rX1)
 	VADDPD_256rr(rX1, rX0, rX0)
 	VMOVDQU_256rm(rX0, rAX)
 	RET

@@ -12,6 +12,7 @@ Point3 crossvec3_sse(Point3, Point3);
 double hsubpd(double, double);
 double fma(double, double, double);
 Point2 addpt2_avx(Point2, Point2);
+Point3 addpt3_avx(Point3, Point3);
 
 double
 fmin(double a, double b)
@@ -95,6 +96,15 @@ main(int argc, char *argv[])
 	print("addpt2(%v, %v) = %v\n", p0, p1, pr);
 	pr = addpt2_avx(p0, p1);
 	print("addpt2_avx(%v, %v) = %v\n", p0, p1, pr);
+
+	print("\n");
+
+	p0t = Pt3(a, 1, 1, b);
+	p1t = Pt3(b, 3, 1, a);
+	prt = addpt3(p0t, p1t);
+	print("addpt3(%V, %V) = %V\n", p0t, p1t, prt);
+	prt = addpt3_avx(p0t, p1t);
+	print("addpt3_avx(%V, %V) = %V\n", p0t, p1t, prt);
 
 	exits(nil);
 }
