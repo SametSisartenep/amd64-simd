@@ -5,24 +5,21 @@
 DATA one(SB)/8,$1.0
 GLOBL one(SB), $8
 
-TEXT dppd(SB), 1, $0
+TEXT dotvec2_sse4(SB), 1, $0
 	MOVQ SP, AX
-	MOVLPD(8, rAX, rX0)	/* MOVLPD a+0(FP), X0 */
-	MOVHPD(16, rAX, rX0)	/* MOVHPD a+8(FP), X0 */
-	MOVLPD(32, rAX, rX1)	/* MOVLPD b+24(FP), X1 */
-	MOVHPD(40, rAX, rX1)	/* MOVHPD b+32(FP), X1*/
+	MOVDQU_mr(8, rAX, rX0)	/* MOVDQU a+0(FP), X0 */
+	MOVDQU_mr(32, rAX, rX1)	/* MOVDQU b+24(FP), X1 */
 	DPPD(rX1, rX0)		/* DPPD $0x31, X1, X0 */
 	RET
 
-TEXT dppda(SB), 1, $0
+TEXT dotvec2_avx(SB), 1, $0
 	MOVQ SP, AX
 	VMOVUPD_128mr(8, rAX, rX0)	/* VMOVUPD a+0(FP), X0 */
 	VMOVUPD_128mr(32, rAX, rX1)	/* VMOVUPD b+24(FP), X1 */
 	VDPPD(rX1, rX0, rX0)		/* VDPPD $0x31, X1, X0, X0 */
-	VZEROUPPER
 	RET
 
-TEXT dppd3(SB), 1, $0
+TEXT dotvec3_sse4(SB), 1, $0
 	MOVQ SP, AX
 	MOVLPD(8, rAX, rX0)	/* MOVLPD a+0(FP), X0 */
 	MOVHPD(16, rAX, rX0)	/* MOVHPD a+8(FP), X0 */
@@ -35,7 +32,7 @@ TEXT dppd3(SB), 1, $0
 	DPPD(rX1, rX0)		/* DPPD $0x31, X1, X0 */
 	RET
 
-TEXT dppd3a(SB), 1, $0
+TEXT dotvec3_avx(SB), 1, $0
 	MOVQ SP, AX
 	VMOVUPD_128mr(8, rAX, rX0)	/* VMOVUPD a+0(FP), X0 */
 	VMOVUPD_128mr(40, rAX, rX1)	/* VMOVUPD b+32(FP), X1 */
@@ -43,7 +40,6 @@ TEXT dppd3a(SB), 1, $0
 	MOVSD a+16(FP), X1
 	MOVSD b+48(FP), X2
 	VFMADD231SD(rX1, rX2, rX0)
-	VZEROUPPER
 	RET
 
 TEXT Pt2b(SB), 1, $0
@@ -63,7 +59,7 @@ TEXT hsubpd(SB), 1, $0
 	HSUBPD(rX0, rX0)	/* HSUBPD X0, X0 */
 	RET
 
-TEXT xvec3(SB), 1, $0
+TEXT crossvec3_sse(SB), 1, $0
 	MOVQ SP, AX
 	ADDQ $8, AX
 	MOVLPD(40, rAX, rX0)	/* MOVLPD b+32(FP), X0 */
@@ -91,7 +87,7 @@ TEXT xvec3(SB), 1, $0
 	MOVSD X0, 24(DI)
 	RET
 
-TEXT xvec3a(SB), 1, $0
+TEXT crossvec3_avx(SB), 1, $0
 	MOVQ SP, AX
 	ADDQ $8, AX
 	
@@ -101,5 +97,13 @@ TEXT fma(SB), 1, $0
 	MOVSD b+8(FP), X1
 	MOVSD c+16(FP), X2
 	VFMADD231SD(rX1, rX2, rX0)
-	VZEROUPPER
+	RET
+
+TEXT addpt2_avx(SB), 1, $0
+	MOVQ SP, AX
+	ADDQ $8, AX
+	VMOVDQU_256mr(8, rAX, rX0)
+	VMOVDQU_256mr(32, rAX, rX1)
+	VADDPD_256rr(rX1, rX0, rX0)
+	VMOVDQU_256rm(rX0, rAX)
 	RET

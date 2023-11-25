@@ -45,6 +45,26 @@
 #define VMOVAPD_256rr(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);		\
 			VOP(0x28, 0x3, (d), (s))
 
+/* VMOVDQA */
+#define VMOVDQA_128mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);	\
+				VOPi(0x6F, 0x1, (d), (s), (off))
+#define VMOVDQA_128rm(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);		\
+			VOP(0x7F, 0x3, (s), (d))
+#define VMOVDQA_256mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);	\
+				VOPi(0x6F, 0x1, (d), (s), (off))
+#define VMOVDQA_256rm(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);		\
+			VOP(0x7F, 0x3, (s), (d))
+
+/* VMODQU */
+#define VMOVDQU_128mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_F3);	\
+				VOPi(0x6F, 0x1, (d), (s), (off))
+#define VMOVDQU_128rm(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_F3);		\
+			VOP(0x7F, 0x3, (s), (d))
+#define VMOVDQU_256mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_F3);	\
+				VOPi(0x6F, 0x1, (d), (s), (off))
+#define VMOVDQU_256rm(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_F3);		\
+			VOP(0x7F, 0x3, (s), (d))
+
 /* VADDPD */
 #define VADDPD_128mr(off, s0, s1, d)	VEX3(0,0,0,VEX_m_0F,0,(s0),VEX_L_128,VEX_p_66);	\
 				VOPi(0x58, 0x1, (d), (s1), (off))

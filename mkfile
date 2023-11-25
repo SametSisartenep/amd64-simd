@@ -6,7 +6,6 @@ OFILES=\
 	main.$O\
 	min.$O\
 	dppd.$O\
-	nanosec.$O\
 
 HFILES=\
 	regs.h\
@@ -14,3 +13,7 @@ HFILES=\
 	avx.h\
 
 </sys/src/cmd/mkone
+
+pulldeps:VQ:
+	git/clone git://shithub.us/sigrid/bench9 || \
+	git/clone https://git.sr.ht/~ft/bench9

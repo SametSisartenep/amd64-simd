@@ -1,0 +1,23 @@
+</$objtype/mkfile
+
+TARG=bench9
+BIN=/$objtype/bin
+arch=`{echo __^$objtype^__}
+CFLAGS=$CFLAGS -D$arch -p
+
+HFILES=\
+	../bench9/b.h\
+	../regs.h\
+	../sse.h\
+	../avx.h\
+
+OFILES=\
+	../bench9/b.$O\
+	../bench9/b_$objtype.$O\
+	../min.$O\
+	../dppd.$O\
+	main.$O\
+
+default:V: all
+
+</sys/src/cmd/mkone
