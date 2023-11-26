@@ -13,6 +13,7 @@ Point2 Pt2b(double, double, double);
 Point3 crossvec3_sse(Point3, Point3);
 double hsubpd(double, double);
 double fma(double, double, double);
+Point2 addpt2_sse(Point2, Point2);
 Point2 addpt2_avx(Point2, Point2);
 Point3 addpt3_avx(Point3, Point3);
 
@@ -232,13 +233,14 @@ static void
 baddpt2(int fd)
 {
 	Bgr g;
-	B *b0, *b1;
+	B *b0, *b1, *b2;
 	Point2 a, b;
 	int i;
 
 	benchinitgr(&g, "2d point sum");
 	b0 = benchadd(&g, "addpt2");
-	b1 = benchadd(&g, "addpt2_avx");
+	b1 = benchadd(&g, "addpt2_sse");
+	b2 = benchadd(&g, "addpt2_avx");
 
 	while(b0->n > 0 || b1->n > 0){
 		a = Pt2(truerand()*frand(), truerand()*frand(), truerand()*frand());
@@ -251,8 +253,13 @@ baddpt2(int fd)
 
 		benchin(b1);
 		for(i = 0; i < 1e6; i++)
-			addpt2_avx(a, b);
+			addpt2_sse(a, b);
 		benchout(b1);
+
+		benchin(b2);
+		for(i = 0; i < 1e6; i++)
+			addpt2_avx(a, b);
+		benchout(b2);
 	}
 
 	benchprintgr(&g, fd);
