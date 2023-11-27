@@ -26,14 +26,14 @@
 #define VZEROALL	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_NO); BYTE $0x77
 
 /* VMOVUPD */
-#define VMOVUPD_128mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);	\
-				VOPi(0x10, 0x1, (d), (s), (off))
-#define VMOVUPD_128rr(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);		\
-			VOP(0x10, 0x3, (d), (s))
-#define VMOVUPD_256mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);	\
-				VOPi(0x10, 0x1, (d), (s), (off))
-#define VMOVUPD_256rr(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);		\
-			VOP(0x10, 0x3, (d), (s))
+#define VMOVUPD_128mr(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);	\
+				VOP(0x10, 0x0, (d), (s))
+#define VMOVUPD_128rm(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);		\
+			VOP(0x11, 0x0, (s), (d))
+#define VMOVUPD_256mr(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);	\
+				VOP(0x10, 0x0, (d), (s))
+#define VMOVUPD_256rm(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);		\
+			VOP(0x11, 0x0, (s), (d))
 
 /* VMOVAPD */
 #define VMOVAPD_128mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_66);	\

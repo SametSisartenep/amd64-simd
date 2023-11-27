@@ -23,13 +23,13 @@
 //opcode = 660F12
 //modrm  = 01 000 000 [AX → X0] / 01 001 000 [AX → X1]
 //disp8 = 8 / 32
-#define MOVLPD(off, s, d) OPi(0x12, 0x1, (d), (s), (off))
+//#define MOVLPD(off, s, d) OPi(0x12, 0x1, (d), (s), (off))
 
 /* MOVHPD */
 //opcode = 660F16
 //modrm  = 01 000 000 [AX → X0] / 01 001 000 [AX → X1]
 //disp8 = 16 / 40
-#define MOVHPD(off, s, d) OPi(0x16, 0x1, (d), (s), (off))
+//#define MOVHPD(off, s, d) OPi(0x16, 0x1, (d), (s), (off))
 
 /* HSUBPD */
 //opcode = 660F7D = 01100110 00001111 01111101
