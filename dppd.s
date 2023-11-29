@@ -5,10 +5,30 @@
 DATA one(SB)/8,$1.0
 GLOBL one(SB), $8
 
+TEXT round(SB), 1, $0
+	MOVSD a+0(FP), X0
+	ROUNDSD $0x4, X0, X0
+	RET
+
+TEXT addsub_sse(SB), 1, $0
+	MOVQ b+8(FP), DX
+	MOVUPD 0(BP), X1
+	MOVUPD 0(DX), X0
+	ADDSUBPD X1, X0
+	MOVUPD X0, 0(DX)
+	RET
+
+TEXT dotvec2_sse(SB), 1, $0
+	MOVUPD a+0(FP), X0
+	MOVUPD b+24(FP), X1
+	MULPD X1, X0
+	HADDPD X0, X0
+	RET
+
 TEXT dotvec2_sse4(SB), 1, $0
 	MOVUPD a+0(FP), X0
 	MOVUPD b+24(FP), X1
-	DPPD(rX1, rX0)		/* DPPD $0x31, X1, X0 */
+	DPPD $0x31, X1, X0
 	RET
 
 TEXT dotvec2_avx(SB), 1, $0
@@ -24,7 +44,7 @@ TEXT dotvec2_avx(SB), 1, $0
 TEXT dotvec3_sse4(SB), 1, $0
 	MOVUPD a+0(FP), X0
 	MOVUPD b+32(FP), X1
-	DPPD(rX1, rX0)		/* DPPD $0x31, X1, X0 */
+	DPPD $0x31, X1, X0
 	MOVSD a+16(FP), X1
 	MULSD b+48(FP), X1
 	ADDSD X1, X0
@@ -56,7 +76,7 @@ TEXT Pt2b(SB), 1, $0
 TEXT hsubpd(SB), 1, $0
 	MOVLPD a+0(FP), X0
 	MOVHPD b+8(FP), X0
-	HSUBPD(rX0, rX0)	/* HSUBPD X0, X0 */
+	HSUBPD X0, X0
 	RET
 
 TEXT crossvec3_sse(SB), 1, $0
@@ -68,15 +88,15 @@ TEXT crossvec3_sse(SB), 1, $0
 	MOVHPD a+24(FP), X2	/* X2 := [a.z][b.z] */
 	MOVAPD X1, X3
 	MULPD X2, X3
-	HSUBPD(rX3, rX3)	/* x */
+	HSUBPD X3, X3		/* x */
 	MOVAPD X2, X4
 	SHUFPD $0x1, X4, X4
 	MULPD X0, X4
-	HSUBPD(rX4, rX4)	/* y */
+	HSUBPD X4, X4		/* y */
 	MOVAPD X0, X5
 	MULPD X1, X5
 	SHUFPD $0x1, X5, X5
-	HSUBPD(rX5, rX5)	/* z */
+	HSUBPD X5, X5		/* z */
 	MOVQ BP, DI
 	MOVSD X3, 0(DI)
 	MOVSD X4, 8(DI)

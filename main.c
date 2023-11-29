@@ -3,6 +3,7 @@
 #include <geometry.h>
 
 double min(double, double);
+double dotvec2_sse(Point2, Point2);
 double dotvec2_sse4(Point2, Point2);
 double dotvec2_avx(Point2, Point2);
 double dotvec3_sse4(Point3, Point3);
@@ -14,6 +15,15 @@ double fma(double, double, double);
 Point2 addpt2_sse(Point2, Point2);
 Point2 addpt2_avx(Point2, Point2);
 Point3 addpt3_avx(Point3, Point3);
+void addsub_sse(double*,double*);
+double round(double);
+
+void
+addsub(double *a, double *b)
+{
+	b[0] = b[0]-a[0];
+	b[1] = b[1]+a[1];
+}
 
 double
 fmin(double a, double b)
@@ -31,6 +41,7 @@ void
 main(int argc, char *argv[])
 {
 	double a, b, r;
+	double va[2], vb[2];
 	Point2 p0, p1, pr;
 	Point3 p0t, p1t, prt;
 
@@ -55,6 +66,9 @@ main(int argc, char *argv[])
 	r = 0;
 	r = dotvec2(p0, p1);
 	print("dotvec2(%v, %v) = %g\n", p0, p1, r);
+	r = 0;
+	r = dotvec2_sse(p0, p1);
+	print("dotvec2_sse(%v, %v) = %g\n", p0, p1, r);
 	r = 0;
 	r = dotvec2_sse4(p0, p1);
 	print("dotvec2_sse4(%v, %v) = %g\n", p0, p1, r);
@@ -126,6 +140,26 @@ main(int argc, char *argv[])
 	prt = Vec3(0,0,0);
 	prt = addpt3_avx(p0t, p1t);
 	print("addpt3_avx(%V, %V) = %V\n", p0t, p1t, prt);
+
+	print("\n");
+
+	va[0] = va[1] = a;
+	vb[0] = vb[1] = b;
+	print("addsub([%g %g], [%g %g]) = ", va[0], va[1], vb[0], vb[1]);
+	addsub(va, vb);
+	print("[%g %g]\n", vb[0], vb[1]);
+
+	va[0] = va[1] = a;
+	vb[0] = vb[1] = b;
+	print("addsub_sse([%g %g], [%g %g]) = ", va[0], va[1], vb[0], vb[1]);
+	addsub_sse(va, vb);
+	print("[%g %g]\n", vb[0], vb[1]);
+
+	print("\n");
+
+	r = 0;
+	r = round(a);
+	print("round(%g) = %g\n", a, r);
 
 	exits(nil);
 }

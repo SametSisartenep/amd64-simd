@@ -5,6 +5,7 @@
 #include "../bench9/b.h"
 
 double min(double, double);
+double dotvec2_sse(Point2, Point2);
 double dotvec2_sse4(Point2, Point2);
 double dotvec2_avx(Point2, Point2);
 double dotvec3_sse4(Point3, Point3);
@@ -64,14 +65,15 @@ static void
 bdotvec2(int fd)
 {
 	Bgr g;
-	B *b0, *b1, *b2;
+	B *b0, *b1, *b2, *b3;
 	Point2 a, b;
 	int i;
 
 	benchinitgr(&g, "2d dot product");
 	b0 = benchadd(&g, "dotvec2");
-	b1 = benchadd(&g, "dotvec2_sse4");
-	b2 = benchadd(&g, "dotvec2_avx");
+	b1 = benchadd(&g, "dotvec2_sse");
+	b2 = benchadd(&g, "dotvec2_sse4");
+	b3 = benchadd(&g, "dotvec2_avx");
 
 	while(b0->n > 0 || b1->n > 0){
 		a = Vec2(truerand()*frand(), truerand()*frand());
@@ -84,13 +86,18 @@ bdotvec2(int fd)
 
 		benchin(b1);
 		for(i = 0; i < 1e6; i++)
-			dotvec2_sse4(a, b);
+			dotvec2_sse(a, b);
 		benchout(b1);
 
 		benchin(b2);
 		for(i = 0; i < 1e6; i++)
-			dotvec2_avx(a, b);
+			dotvec2_sse4(a, b);
 		benchout(b2);
+
+		benchin(b3);
+		for(i = 0; i < 1e6; i++)
+			dotvec2_avx(a, b);
+		benchout(b3);
 	}
 
 	benchprintgr(&g, fd);

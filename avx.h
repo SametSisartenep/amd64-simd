@@ -55,7 +55,7 @@
 #define VMOVDQA_256rm(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_256,VEX_p_66);		\
 			VOP(0x7F, 0x3, (s), (d))
 
-/* VMODQU */
+/* VMOVDQU */
 #define VMOVDQU_128mr(off, s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_F3);	\
 				VOPi(0x6F, 0x1, (d), (s), (off))
 #define VMOVDQU_128rm(s, d)	VEX3(0,0,0,VEX_m_0F,0,0,VEX_L_128,VEX_p_F3);		\
