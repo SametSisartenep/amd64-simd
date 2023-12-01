@@ -41,6 +41,29 @@ TEXT dotvec2_avx(SB), 1, $0
 	VZEROUPPER
 	RET
 
+TEXT dotvec2_sse_a(SB), 1, $0
+	MOVQ b+8(FP), DX
+	MOVAPD 0(DX), X1
+	MOVAPD 0(BP), X0
+	MULPD X1, X0
+	HADDPD X0, X0
+	RET
+
+TEXT dotvec2_sse4_a(SB), 1, $0
+	MOVQ b+8(FP), DX
+	MOVAPD 0(DX), X1
+	MOVAPD 0(BP), X0
+	DPPD $0x31, X1, X0
+	RET
+
+TEXT dotvec2_avx_a(SB), 1, $0
+	MOVQ b+8(FP), DX
+	VMOVAPD_128mr(0, rDX, rX0)
+	VMOVAPD_128mr(0, rBP, rX1)
+	VDPPD(rX1, rX0, rX0)		/* VDPPD $0x31, X1, X0, X0 */
+	VZEROUPPER
+	RET
+
 TEXT dotvec3_sse4(SB), 1, $0
 	MOVUPD a+0(FP), X0
 	MOVUPD b+32(FP), X1
@@ -61,6 +84,16 @@ TEXT dotvec3_avx(SB), 1, $0
 	MOVSD b+48(FP), X2
 	VFMADD231SD(rX1, rX2, rX0)
 	VZEROUPPER
+	RET
+
+TEXT dotvec3_sse4_a(SB), 1, $0
+	MOVQ b+8(FP), DX
+	MOVAPD 0(DX), X0
+	MOVAPD 0(BP), X1
+	DPPD $0x31, X1, X0
+	MOVSD 16(DX), X1
+	MULSD 16(BP), X1
+	ADDSD X1, X0
 	RET
 
 TEXT Pt2b(SB), 1, $0
