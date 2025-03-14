@@ -96,6 +96,17 @@ TEXT dotvec3_sse4_a(SB), 1, $0
 	ADDSD X1, X0
 	RET
 
+TEXT dotvec3_avx_a(SB), 1, $0
+	MOVQ b+8(FP), DX
+	VMOVAPD_128mr(0, rDX, rX0)
+	VMOVAPD_128mr(0, rBP, rX1)
+	VDPPD(rX1, rX0, rX0)		/* VDPPD $0x31, X1, X0, X0 */
+	MOVSD 16(DX), X1
+	MOVSD 16(BP), X2
+	VFMADD231SD(rX1, rX2, rX0)
+	VZEROUPPER
+	RET
+
 TEXT Pt2b(SB), 1, $0
 	MOVQ BP, DI
 	MOVSD x+8(FP), X0

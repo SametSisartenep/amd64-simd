@@ -17,3 +17,9 @@ HFILES=\
 pulldeps:VQ:
 	git/clone git://shithub.us/sigrid/bench9 || \
 	git/clone https://git.sr.ht/~ft/bench9
+
+verify:VQ: $O.out
+	$O.out 13 31
+
+bench:VQ:
+	@{cd bench; mk && $O.out}

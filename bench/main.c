@@ -5,37 +5,30 @@
 #include "../bench9/b.h"
 
 double min(double, double);
+
 double dotvec2_sse(Point2, Point2);
 double dotvec2_sse4(Point2, Point2);
 double dotvec2_avx(Point2, Point2);
 double dotvec2_sse_a(Point2*, Point2*);
 double dotvec2_sse4_a(Point2*, Point2*);
 double dotvec2_avx_a(Point2*, Point2*);
+
 double dotvec3_sse4(Point3, Point3);
 double dotvec3_avx(Point3, Point3);
 double dotvec3_sse4_a(Point3*, Point3*);
+double dotvec3_avx_a(Point3*, Point3*);
+
 Point2 Pt2b(double, double, double);
+
 Point3 crossvec3_sse(Point3, Point3);
+
 double hsubpd(double, double);
+
 double fma(double, double, double);
+
 Point2 addpt2_sse(Point2, Point2);
 Point2 addpt2_avx(Point2, Point2);
 Point3 addpt3_avx(Point3, Point3);
-
-void *
-amalloc(ulong n, ulong a)
-{
-	void *p;
-
-	assert(a > 1 && (a&1) == 0);
-
-	a--;
-	p = malloc(n+a);
-	if(p == nil)
-		sysfatal("malloc: %r");
-	p = (void*)(((uintptr)p + a)&~a);
-	return p;
-}
 
 double
 fmin(double a, double b)
@@ -47,6 +40,18 @@ double
 madd(double a, double b, double c)
 {
 	return a + b*c;
+}
+
+double
+dotvec2_p(Point2 *a, Point2 *b)
+{
+	return a->x*b->x + a->y*b->y;
+}
+
+double
+dotvec3_p(Point3 *a, Point3 *b)
+{
+	return a->x*b->x + a->y*b->y + a->z*b->z;
 }
 
 static void
@@ -84,7 +89,7 @@ static void
 bdotvec2(int fd)
 {
 	Bgr g;
-	B *b0, *b1, *b2, *b3, *b4, *b5, *b6;
+	B *b0, *b1, *b2, *b3, *b4, *b5, *b6, *b7;
 	Point2 a, b;
 	Point2 *aa, *bb;
 	int i;
@@ -97,12 +102,13 @@ bdotvec2(int fd)
 	b4 = benchadd(&g, "dotvec2_sse_a");
 	b5 = benchadd(&g, "dotvec2_sse4_a");
 	b6 = benchadd(&g, "dotvec2_avx_a");
+	b7 = benchadd(&g, "dotvec2_p");
 
 	while(b0->n > 0 || b1->n > 0){
 		a = Vec2(truerand()*frand(), truerand()*frand());
 		b = Vec2(truerand()*frand(), truerand()*frand());
-		aa = amalloc(sizeof(Point2), 16);
-		bb = amalloc(sizeof(Point2), 16);
+		aa = mallocalign(sizeof(Point2), 16, 0, 0);
+		bb = mallocalign(sizeof(Point2), 16, 0, 0);
 		*aa = a;
 		*bb = b;
 
@@ -140,6 +146,11 @@ bdotvec2(int fd)
 		for(i = 0; i < 1e6; i++)
 			dotvec2_avx_a(aa, bb);
 		benchout(b6);
+
+		benchin(b7);
+		for(i = 0; i < 1e6; i++)
+			dotvec2_p(aa, bb);
+		benchout(b7);
 	}
 
 	benchprintgr(&g, fd);
@@ -150,7 +161,7 @@ static void
 bdotvec3(int fd)
 {
 	Bgr g;
-	B *b0, *b1, *b2, *b3;
+	B *b0, *b1, *b2, *b3, *b4, *b5;
 	Point3 a, b;
 	Point3 *aa, *bb;
 	int i;
@@ -160,12 +171,14 @@ bdotvec3(int fd)
 	b1 = benchadd(&g, "dotvec3_sse4");
 	b2 = benchadd(&g, "dotvec3_avx");
 	b3 = benchadd(&g, "dotvec3_sse4_a");
+	b4 = benchadd(&g, "dotvec3_avx_a");
+	b5 = benchadd(&g, "dotvec3_p");
 
 	while(b0->n > 0 || b1->n > 0){
 		a = Vec3(truerand()*frand(), truerand()*frand(), truerand()*frand());
 		b = Vec3(truerand()*frand(), truerand()*frand(), truerand()*frand());
-		aa = amalloc(sizeof(Point3), 16);
-		bb = amalloc(sizeof(Point3), 16);
+		aa = mallocalign(sizeof(Point3), 16, 0, 0);
+		bb = mallocalign(sizeof(Point3), 16, 0, 0);
 		*aa = a;
 		*bb = b;
 
@@ -188,6 +201,16 @@ bdotvec3(int fd)
 		for(i = 0; i < 1e6; i++)
 			dotvec3_sse4_a(aa, bb);
 		benchout(b3);
+
+		benchin(b4);
+		for(i = 0; i < 1e6; i++)
+			dotvec3_avx_a(aa, bb);
+		benchout(b4);
+
+		benchin(b5);
+		for(i = 0; i < 1e6; i++)
+			dotvec3_p(aa, bb);
+		benchout(b5);
 	}
 
 	benchprintgr(&g, fd);

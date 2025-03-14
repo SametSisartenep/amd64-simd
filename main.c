@@ -3,39 +3,34 @@
 #include <geometry.h>
 
 double min(double, double);
+
 double dotvec2_sse(Point2, Point2);
 double dotvec2_sse4(Point2, Point2);
 double dotvec2_avx(Point2, Point2);
 double dotvec2_sse_a(Point2*, Point2*);
 double dotvec2_sse4_a(Point2*, Point2*);
 double dotvec2_avx_a(Point2*, Point2*);
+
 double dotvec3_sse4(Point3, Point3);
 double dotvec3_avx(Point3, Point3);
 double dotvec3_sse4_a(Point3*, Point3*);
+double dotvec3_avx_a(Point3*, Point3*);
+
 Point2 Pt2b(double, double, double);
+
 Point3 crossvec3_sse(Point3, Point3);
+
 double hsubpd(double, double);
+
 double fma(double, double, double);
+
 Point2 addpt2_sse(Point2, Point2);
 Point2 addpt2_avx(Point2, Point2);
 Point3 addpt3_avx(Point3, Point3);
+
 void addsub_sse(double*,double*);
+
 double round(double);
-
-void *
-amalloc(ulong n, ulong a)
-{
-	void *p;
-
-	assert(a > 1 && (a&1) == 0);
-
-	a--;
-	p = malloc(n+a);
-	if(p == nil)
-		sysfatal("malloc: %r");
-	p = (void*)(((uintptr)p + a)&~a);
-	return p;
-}
 
 void
 addsub(double *a, double *b)
@@ -56,6 +51,12 @@ madd(double a, double b, double c)
 	return a + b*c;
 }
 
+double
+dotvec2_p(Point2 *a, Point2 *b)
+{
+	return a->x*b->x + a->y*b->y;
+}
+
 void
 main(int argc, char *argv[])
 {
@@ -73,13 +74,13 @@ main(int argc, char *argv[])
 	a = strtod(argv[0], nil);
 	b = strtod(argv[1], nil);
 
-	ap0 = amalloc(sizeof(Point2), 16);
-	ap1 = amalloc(sizeof(Point2), 16);
-	apr = amalloc(sizeof(Point2), 16);
+	ap0 = mallocalign(sizeof(Point2), 16, 0, 0);
+	ap1 = mallocalign(sizeof(Point2), 16, 0, 0);
+	apr = mallocalign(sizeof(Point2), 16, 0, 0);
 
-	ap0t = amalloc(sizeof(Point3), 16);
-	ap1t = amalloc(sizeof(Point3), 16);
-	aprt = amalloc(sizeof(Point3), 16);
+	ap0t = mallocalign(sizeof(Point3), 16, 0, 0);
+	ap1t = mallocalign(sizeof(Point3), 16, 0, 0);
+	aprt = mallocalign(sizeof(Point3), 16, 0, 0);
 
 	r = 0;
 	r = fmin(a, b);
@@ -95,6 +96,9 @@ main(int argc, char *argv[])
 	r = 0;
 	r = dotvec2(p0, p1);
 	print("dotvec2(%v, %v) = %g\n", p0, p1, r);
+	r = 0;
+	r = dotvec2_p(&p0, &p1);
+	print("dotvec2_p(%v, %v) = %g\n", p0, p1, r);
 	r = 0;
 	r = dotvec2_sse(p0, p1);
 	print("dotvec2_sse(%v, %v) = %g\n", p0, p1, r);
@@ -140,6 +144,9 @@ main(int argc, char *argv[])
 	r = 0;
 	r = dotvec3_sse4_a(ap0t, ap1t);
 	print("dotvec3_sse4_a(%V, %V) = %g\n", *ap0t, *ap1t, r);
+	r = 0;
+	r = dotvec3_avx_a(ap0t, ap1t);
+	print("dotvec3_avx_a(%V, %V) = %g\n", *ap0t, *ap1t, r);
 
 	print("\n");
 
