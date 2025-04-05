@@ -56,6 +56,168 @@ dotvec3_p(Point3 *a, Point3 *b)
 	return a->x*b->x + a->y*b->y + a->z*b->z;
 }
 
+void
+mulm_T(Matrix a, Matrix b)
+{
+	int i, j, k;
+	Matrix tmp, bT;
+
+	memmove(bT, b, 3*3*sizeof(double));
+	transposem(bT);
+
+	for(i = 0; i < 3; i++)
+		for(j = 0; j < 3; j++){
+			tmp[i][j] = 0;
+			for(k = 0; k < 3; k++)
+				tmp[i][j] += a[i][k]*bT[j][k];
+		}
+	memmove(a, tmp, 3*3*sizeof(double));
+}
+
+#define SM 3
+void
+mulm_subm(Matrix a, Matrix b)
+{
+	int i, j, k, i2, j2, k2;
+	Matrix tmp;
+	double *tmpp, *ap, *bp;
+
+	memset(tmp, 0, 3*3*sizeof(double));
+	for (i = 0; i < 3; i += SM)
+	for (j = 0; j < 3; j += SM)
+	for (k = 0; k < 3; k += SM)
+	for (i2 = 0, tmpp = &tmp[i][j], ap = &a[i][k]; i2 < SM; ++i2, tmpp += 3, ap += 3)
+	for (k2 = 0, bp = &b[k][j]; k2 < SM; ++k2, bp += 3)
+	for (j2 = 0; j2 < SM; ++j2)
+		tmpp[j2] += ap[k2] * bp[j2];
+	memmove(a, tmp, 3*3*sizeof(double));
+}
+
+void
+mulm_unrl(Matrix a, Matrix b)
+{
+	Matrix tmp;
+
+	tmp[0][0] = 0;
+	tmp[0][0] += a[0][0]*b[0][0]; tmp[0][0] += a[0][1]*b[1][0]; tmp[0][0] += a[0][2]*b[2][0];
+	tmp[0][1] = 0;
+	tmp[0][1] += a[0][0]*b[0][1]; tmp[0][1] += a[0][1]*b[1][1]; tmp[0][1] += a[0][2]*b[2][1];
+	tmp[0][2] = 0;
+	tmp[0][2] += a[0][0]*b[0][2]; tmp[0][2] += a[0][1]*b[1][2]; tmp[0][2] += a[0][2]*b[2][2];
+
+	tmp[1][0] = 0;
+	tmp[1][0] += a[1][0]*b[0][0]; tmp[1][0] += a[1][1]*b[1][0]; tmp[1][0] += a[1][2]*b[2][0];
+	tmp[1][1] = 0;
+	tmp[1][1] += a[1][0]*b[0][1]; tmp[1][1] += a[1][1]*b[1][1]; tmp[1][1] += a[1][2]*b[2][1];
+	tmp[1][2] = 0;
+	tmp[1][2] += a[1][0]*b[0][2]; tmp[1][2] += a[1][1]*b[1][2]; tmp[1][2] += a[1][2]*b[2][2];
+
+	tmp[2][0] = 0;
+	tmp[2][0] += a[2][0]*b[0][0]; tmp[2][0] += a[2][1]*b[1][0]; tmp[2][0] += a[2][2]*b[2][0];
+	tmp[2][1] = 0;
+	tmp[2][1] += a[2][0]*b[0][1]; tmp[2][1] += a[2][1]*b[1][1]; tmp[2][1] += a[2][2]*b[2][1];
+	tmp[2][2] = 0;
+	tmp[2][2] += a[2][0]*b[0][2]; tmp[2][2] += a[2][1]*b[1][2]; tmp[2][2] += a[2][2]*b[2][2];
+	memmove(a, tmp, 3*3*sizeof(double));
+}
+
+void
+mulm3_T(Matrix3 a, Matrix3 b)
+{
+	int i, j, k;
+	Matrix3 tmp, bT;
+
+	memmove(bT, b, 4*4*sizeof(double));
+	transposem3(bT);
+
+	for(i = 0; i < 4; i++)
+		for(j = 0; j < 4; j++){
+			tmp[i][j] = 0;
+			for(k = 0; k < 4; k++)
+				tmp[i][j] += a[i][k]*bT[j][k];
+		}
+	memmove(a, tmp, 4*4*sizeof(double));
+}
+
+#undef SM
+#define SM 4
+void
+mulm3_subm(Matrix3 a, Matrix3 b)
+{
+	int i, j, k, i2, j2, k2;
+	Matrix3 tmp;
+	double *tmpp, *ap, *bp;
+
+	memset(tmp, 0, 4*4*sizeof(double));
+	for (i = 0; i < 4; i += SM)
+	for (j = 0; j < 4; j += SM)
+	for (k = 0; k < 4; k += SM)
+	for (i2 = 0, tmpp = &tmp[i][j], ap = &a[i][k]; i2 < SM; ++i2, tmpp += 4, ap += 4)
+	for (k2 = 0, bp = &b[k][j]; k2 < SM; ++k2, bp += 4)
+	for (j2 = 0; j2 < SM; ++j2)
+		tmpp[j2] += ap[k2] * bp[j2];
+	memmove(a, tmp, 4*4*sizeof(double));
+}
+
+void
+mulm3_unrl(Matrix3 a, Matrix3 b)
+{
+	Matrix3 tmp;
+
+	tmp[0][0] = 0;
+	tmp[0][0] += a[0][0]*b[0][0]; tmp[0][0] += a[0][1]*b[1][0];
+	tmp[0][0] += a[0][2]*b[2][0]; tmp[0][0] += a[0][3]*b[3][0];
+	tmp[0][1] = 0;
+	tmp[0][1] += a[0][0]*b[0][1]; tmp[0][1] += a[0][1]*b[1][1];
+	tmp[0][1] += a[0][2]*b[2][1]; tmp[0][1] += a[0][3]*b[3][1];
+	tmp[0][2] = 0;
+	tmp[0][2] += a[0][0]*b[0][2]; tmp[0][2] += a[0][1]*b[1][2];
+	tmp[0][2] += a[0][2]*b[2][2]; tmp[0][2] += a[0][3]*b[3][2];
+	tmp[0][3] = 0;
+	tmp[0][3] += a[0][0]*b[0][3]; tmp[0][3] += a[0][1]*b[1][3];
+	tmp[0][3] += a[0][2]*b[2][3]; tmp[0][3] += a[0][3]*b[3][3];
+
+	tmp[1][0] = 0;
+	tmp[1][0] += a[1][0]*b[0][0]; tmp[1][0] += a[1][1]*b[1][0];
+	tmp[1][0] += a[1][2]*b[2][0]; tmp[1][0] += a[1][3]*b[3][0];
+	tmp[1][1] = 0;
+	tmp[1][1] += a[1][0]*b[0][1]; tmp[1][1] += a[1][1]*b[1][1];
+	tmp[1][1] += a[1][2]*b[2][1]; tmp[1][1] += a[1][3]*b[3][1];
+	tmp[1][2] = 0;
+	tmp[1][2] += a[1][0]*b[0][2]; tmp[1][2] += a[1][1]*b[1][2];
+	tmp[1][2] += a[1][2]*b[2][2]; tmp[1][2] += a[1][3]*b[3][2];
+	tmp[1][3] = 0;
+	tmp[1][3] += a[1][0]*b[0][3]; tmp[1][3] += a[1][1]*b[1][3];
+	tmp[1][3] += a[1][2]*b[2][3]; tmp[1][3] += a[1][3]*b[3][3];
+
+	tmp[2][0] = 0;
+	tmp[2][0] += a[2][0]*b[0][0]; tmp[2][0] += a[2][1]*b[1][0];
+	tmp[2][0] += a[2][2]*b[2][0]; tmp[2][0] += a[2][3]*b[3][0];
+	tmp[2][1] = 0;
+	tmp[2][1] += a[2][0]*b[0][1]; tmp[2][1] += a[2][1]*b[1][1];
+	tmp[2][1] += a[2][2]*b[2][1]; tmp[2][1] += a[2][3]*b[3][1];
+	tmp[2][2] = 0;
+	tmp[2][2] += a[2][0]*b[0][2]; tmp[2][2] += a[2][1]*b[1][2];
+	tmp[2][2] += a[2][2]*b[2][2]; tmp[2][2] += a[2][3]*b[3][2];
+	tmp[2][3] = 0;
+	tmp[2][3] += a[2][0]*b[0][3]; tmp[2][3] += a[2][1]*b[1][3];
+	tmp[2][3] += a[2][2]*b[2][3]; tmp[2][3] += a[2][3]*b[3][3];
+
+	tmp[3][0] = 0;
+	tmp[3][0] += a[3][0]*b[0][0]; tmp[3][0] += a[3][1]*b[1][0];
+	tmp[3][0] += a[3][2]*b[2][0]; tmp[3][0] += a[3][3]*b[3][0];
+	tmp[3][1] = 0;
+	tmp[3][1] += a[3][0]*b[0][1]; tmp[3][1] += a[3][1]*b[1][1];
+	tmp[3][1] += a[3][2]*b[2][1]; tmp[3][1] += a[3][3]*b[3][1];
+	tmp[3][2] = 0;
+	tmp[3][2] += a[3][0]*b[0][2]; tmp[3][2] += a[3][1]*b[1][2];
+	tmp[3][2] += a[3][2]*b[2][2]; tmp[3][2] += a[3][3]*b[3][2];
+	tmp[3][3] = 0;
+	tmp[3][3] += a[3][0]*b[0][3]; tmp[3][3] += a[3][1]*b[1][3];
+	tmp[3][3] += a[3][2]*b[2][3]; tmp[3][3] += a[3][3]*b[3][3];
+	memmove(a, tmp, 4*4*sizeof(double));
+}
+
 static void
 bmin(int fd)
 {
@@ -394,6 +556,116 @@ baddpt3(int fd)
 	benchfreegr(&g);
 }
 
+static void
+bmulm(int fd)
+{
+	Bgr g;
+	B *b0, *b1, *b2, *b3;
+	Matrix a0, a, b;
+	int i, j;
+
+	benchinitgr(&g, "3x3 matrix mul");
+	b0 = benchadd(&g, "mulm");
+	b1 = benchadd(&g, "mulm_T");
+	b2 = benchadd(&g, "mulm_subm");
+	b3 = benchadd(&g, "mulm_unrl");
+
+	while(b0->n > 0 || b1->n > 0){
+		for(i = 0; i < 3; i++)
+		for(j = 0; j < 3; j++)
+			a0[i][j] = a[i][j] = truerand()*frand();
+		for(i = 0; i < 3; i++)
+		for(j = 0; j < 3; j++)
+			b[i][j] = truerand()*frand();
+
+		benchin(b0);
+		for(i = 0; i < 1e6; i++){
+			mulm(a, b);
+			memmove(a, a0, 3*3*sizeof(double));
+		}
+		benchout(b0);
+
+		benchin(b1);
+		for(i = 0; i < 1e6; i++){
+			mulm_T(a, b);
+			memmove(a, a0, 3*3*sizeof(double));
+		}
+		benchout(b1);
+
+		benchin(b2);
+		for(i = 0; i < 1e6; i++){
+			mulm_subm(a, b);
+			memmove(a, a0, 3*3*sizeof(double));
+		}
+		benchout(b2);
+
+		benchin(b3);
+		for(i = 0; i < 1e6; i++){
+			mulm_unrl(a, b);
+			memmove(a, a0, 3*3*sizeof(double));
+		}
+		benchout(b3);
+	}
+
+	benchprintgr(&g, fd);
+	benchfreegr(&g);
+}
+
+static void
+bmulm3(int fd)
+{
+	Bgr g;
+	B *b0, *b1, *b2, *b3;
+	Matrix3 a0, a, b;
+	int i, j;
+
+	benchinitgr(&g, "4x4 matrix mul");
+	b0 = benchadd(&g, "mulm3");
+	b1 = benchadd(&g, "mulm3_T");
+	b2 = benchadd(&g, "mulm3_subm");
+	b3 = benchadd(&g, "mulm3_unrl");
+
+	while(b0->n > 0 || b1->n > 0){
+		for(i = 0; i < 4; i++)
+		for(j = 0; j < 4; j++)
+			a0[i][j] = a[i][j] = truerand()*frand();
+		for(i = 0; i < 4; i++)
+		for(j = 0; j < 4; j++)
+			b[i][j] = truerand()*frand();
+
+		benchin(b0);
+		for(i = 0; i < 1e6; i++){
+			mulm3(a, b);
+			memmove(a, a0, 4*4*sizeof(double));
+		}
+		benchout(b0);
+
+		benchin(b1);
+		for(i = 0; i < 1e6; i++){
+			mulm3_T(a, b);
+			memmove(a, a0, 4*4*sizeof(double));
+		}
+		benchout(b1);
+
+		benchin(b2);
+		for(i = 0; i < 1e6; i++){
+			mulm3_subm(a, b);
+			memmove(a, a0, 4*4*sizeof(double));
+		}
+		benchout(b2);
+
+		benchin(b3);
+		for(i = 0; i < 1e6; i++){
+			mulm3_unrl(a, b);
+			memmove(a, a0, 4*4*sizeof(double));
+		}
+		benchout(b3);
+	}
+
+	benchprintgr(&g, fd);
+	benchfreegr(&g);
+}
+
 void
 threadmain(int argc, char **argv)
 {
@@ -418,6 +690,10 @@ threadmain(int argc, char **argv)
 	baddpt2(1);
 	bseparator(1);
 	baddpt3(1);
+	bseparator(1);
+	bmulm(1);
+	bseparator(1);
+	bmulm3(1);
 
 	threadexitsall(nil);
 }
