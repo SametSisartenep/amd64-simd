@@ -113,6 +113,14 @@ mulm_unrl(Matrix a, Matrix b)
 }
 
 void
+smulm_unrl(Matrix m, double s)
+{
+	m[0][0] *= s; m[0][1] *= s; m[0][2] *= s;
+	m[1][0] *= s; m[1][1] *= s; m[1][2] *= s;
+	m[2][0] *= s; m[2][1] *= s; m[2][2] *= s;
+}
+
+void
 mulm3_T(Matrix3 a, Matrix3 b)
 {
 	int i, j, k;
@@ -175,6 +183,15 @@ mulm3_unrl(Matrix3 a, Matrix3 b)
 	a[3][1] = t0*b[0][1] + t1*b[1][1] + t2*b[2][1] + t3*b[3][1];
 	a[3][2] = t0*b[0][2] + t1*b[1][2] + t2*b[2][2] + t3*b[3][2];
 	a[3][3] = t0*b[0][3] + t1*b[1][3] + t2*b[2][3] + t3*b[3][3];
+}
+
+void
+smulm3_unrl(Matrix3 m, double s)
+{
+	m[0][0] *= s; m[0][1] *= s; m[0][2] *= s; m[0][3] *= s;
+	m[1][0] *= s; m[1][1] *= s; m[1][2] *= s; m[1][3] *= s;
+	m[2][0] *= s; m[2][1] *= s; m[2][2] *= s; m[2][3] *= s;
+	m[3][0] *= s; m[3][1] *= s; m[3][2] *= s; m[3][3] *= s;
 }
 
 static void
@@ -665,6 +682,98 @@ bmulm3(int fd)
 	benchfreegr(&g);
 }
 
+static void
+bsmulm(int fd)
+{
+	Bgr g;
+	B *b0, *b1;
+	Matrix a0, a;
+	double s;
+	int i, j;
+
+	benchinitgr(&g, "3x3 matrix smul");
+	b0 = benchadd(&g, "smulm");
+	b1 = benchadd(&g, "smulm_unrl");
+
+	while(b0->n > 0 || b1->n > 0){
+		for(i = 0; i < 3; i++)
+		for(j = 0; j < 3; j++)
+			a0[i][j] = a[i][j] = truerand()*frand();
+		s = truerand()*frand();
+
+		benchin(b0);
+		for(i = 0; i < 1e6; i++){
+			smulm(a, s);
+//			if(i == 0){
+//				Matrix t;
+//				memmove(t, a, 3*3*sizeof(double));
+//				memmove(a, a0, 3*3*sizeof(double));
+//				smulm_unrl(a, s);
+//				print("match %d\n", eqmat2(t, a));
+//				return;
+//			}
+			memmove(a, a0, 3*3*sizeof(double));
+		}
+		benchout(b0);
+
+		benchin(b1);
+		for(i = 0; i < 1e6; i++){
+			smulm_unrl(a, s);
+			memmove(a, a0, 3*3*sizeof(double));
+		}
+		benchout(b1);
+	}
+
+	benchprintgr(&g, fd);
+	benchfreegr(&g);
+}
+
+static void
+bsmulm3(int fd)
+{
+	Bgr g;
+	B *b0, *b1;
+	Matrix3 a0, a;
+	double s;
+	int i, j;
+
+	benchinitgr(&g, "4x4 matrix smul");
+	b0 = benchadd(&g, "smulm3");
+	b1 = benchadd(&g, "smulm3_unrl");
+
+	while(b0->n > 0 || b1->n > 0){
+		for(i = 0; i < 4; i++)
+		for(j = 0; j < 4; j++)
+			a0[i][j] = a[i][j] = truerand()*frand();
+		s = truerand()*frand();
+
+		benchin(b0);
+		for(i = 0; i < 1e6; i++){
+			smulm3(a, s);
+//			if(i == 0){
+//				Matrix3 t;
+//				memmove(t, a, 4*4*sizeof(double));
+//				memmove(a, a0, 4*4*sizeof(double));
+//				smulm3_unrl(a, s);
+//				print("match %d\n", eqmat3(t, a));
+//				return;
+//			}
+			memmove(a, a0, 4*4*sizeof(double));
+		}
+		benchout(b0);
+
+		benchin(b1);
+		for(i = 0; i < 1e6; i++){
+			smulm3_unrl(a, s);
+			memmove(a, a0, 4*4*sizeof(double));
+		}
+		benchout(b1);
+	}
+
+	benchprintgr(&g, fd);
+	benchfreegr(&g);
+}
+
 void
 threadmain(int argc, char **argv)
 {
@@ -693,6 +802,10 @@ threadmain(int argc, char **argv)
 	bmulm(1);
 	bseparator(1);
 	bmulm3(1);
+	bseparator(1);
+	bsmulm(1);
+	bseparator(1);
+	bsmulm3(1);
 
 	threadexitsall(nil);
 }
